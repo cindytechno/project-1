@@ -1,0 +1,48 @@
+import tensorflow as tf
+
+# Definiere den Generator
+def generator_model():
+    # Implementiere den Generator mit TensorFlow
+    # Verwende beispielsweise eine Kombination aus Convolutional und Transposed Convolutional Layern
+
+# Definiere den Diskriminator
+def discriminator_model():
+    # Implementiere den Diskriminator mit TensorFlow
+    # Verwende beispielsweise eine Kombination aus Convolutional Layern und Fully Connected Layern
+
+# Definiere die Verlustfunktionen
+cross_entropy = tf.keras.losses.BinaryCrossentropy(from_logits=True)
+
+# Definiere den Generator und den Diskriminator
+generator = generator_model()
+discriminator = discriminator_model()
+
+# Definiere den Optimizer für Generator und Diskriminator
+generator_optimizer = tf.keras.optimizers.Adam(learning_rate=0.0002, beta_1=0.5)
+discriminator_optimizer = tf.keras.optimizers.Adam(learning_rate=0.0002, beta_1=0.5)
+
+# Trainingsloop
+for epoch in range(num_epochs):
+    for images in dataset:
+        # Generiere zufälligen Input für den Generator
+        noise = tf.random.normal([batch_size, latent_dim])
+        
+        with tf.GradientTape() as gen_tape, tf.GradientTape() as disc_tape:
+            # Generiere Bilder mit dem Generator
+            generated_images = generator(noise, training=True)
+            
+            # Berechne die Ausgaben des Diskriminators für reale und generierte Bilder
+            real_output = discriminator(images, training=True)
+            generated_output = discriminator(generated_images, training=True)
+            
+            # Berechne die Verluste für Generator und Diskriminator
+            gen_loss = generator_loss(generated_output)
+            disc_loss = discriminator_loss(real_output, generated_output)
+        
+        # Berechne die Gradienten und aktualisiere die Gewichte des Generator und Diskriminator
+        gradients_of_generator = gen_tape.gradient(gen_loss, generator.trainable_variables)
+        gradients_of_discriminator = disc_tape.gradient(disc_loss, discriminator.trainable_variables)
+        
+        generator_optimizer.apply_gradients(zip(gradients_of_generator, generator.trainable_variables))
+        discriminator_optimizer.apply_gradients(zip(gradients_of_discriminator, discriminator.trainable_variables))
+   
